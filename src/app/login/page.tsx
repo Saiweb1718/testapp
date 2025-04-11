@@ -29,24 +29,13 @@ export default function RegisterPage() {
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="username">Username or Email</Label>
           <Input
             type="text"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="IronMan"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
           />
         </div>
 
@@ -61,18 +50,7 @@ export default function RegisterPage() {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="••••••••"
-          />
-        </div>
-
-        <Button className="w-full">Register</Button>
+        <Button className="w-full">Login</Button>
         <div>
           <Button onClick={handleGoogleSignIn } className="w-full">
             <div className="flex items-center justify-center space-x-4">

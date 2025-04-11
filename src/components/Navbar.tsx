@@ -2,6 +2,7 @@
 "use client";
 
 import { useState,useEffect } from "react";
+import { useRouter} from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -12,13 +13,16 @@ export default function Navbar() {
   const [isLoggedIN, setIsLoggedIn] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     setMounted(true);
   }
   , []);
   if (!mounted) {
     return null; // Prevents hydration error
+  }
+  const Handleclick =  () =>{
+   router.push("/registration")
   }
 
   return (
@@ -50,7 +54,8 @@ export default function Navbar() {
             <Link href="/contact" className="px-4 py-1 rounded-3xl hover:bg-gray-200 dark:hover:bg-gray-700">
               Contact
             </Link>
-            {!isLoggedIN && <Button>Login / Signup</Button>}
+            {!isLoggedIN && <Button
+             onClick={Handleclick}>Login / Signup</Button>}
 
             {/* Dark Mode Toggle */}
             <Button

@@ -8,6 +8,10 @@ export interface Post extends Document{
     author?:mongoose.Schema.Types.ObjectId;
     category?:mongoose.Schema.Types.ObjectId;
     tags?: mongoose.Schema.Types.ObjectId[];
+    image?: string;
+    comments?: mongoose.Schema.Types.ObjectId[];
+    reactions?: mongoose.Schema.Types.ObjectId[];
+    group?: mongoose.Schema.Types.ObjectId[];
 }
 
 const PostSchema : Schema<Post> = new mongoose.Schema({
@@ -40,7 +44,22 @@ const PostSchema : Schema<Post> = new mongoose.Schema({
     tags:{
         type:[mongoose.Schema.Types.ObjectId],
         ref:"Tag",
-    }    
+    }, 
+    image:{
+        type:String,
+    },
+    comments:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:"Comment",
+    },
+    reactions:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:"Reaction",
+    },
+    group:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:"Group",
+    },
 });
 
 export const Post = (mongoose.models.Post as mongoose.Model<Post>) ||(mongoose.model<Post> ("Post",PostSchema));

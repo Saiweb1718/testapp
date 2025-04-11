@@ -7,7 +7,7 @@ export interface User extends Document{
     verifycode:string;
     codeExpiry:Date;
     isVerified:boolean;
-    role: "admin" | "user";
+    groups?:mongoose.Schema.Types.ObjectId[];
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -42,11 +42,10 @@ const UserSchema: Schema<User> = new Schema({
         type:Boolean,
         default:false
     },
-    role:{
-        type:String,
-        enum:["admin","user"],
-        default:"user"
-    }    
+    groups:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Group",
+    }]   
 },{timestamps:true}); 
 
 export const User =  (mongoose.models.User as mongoose.Model<User>)||mongoose.model<User>("User",UserSchema);
