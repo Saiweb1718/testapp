@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import  Link  from "next/link";
 import { signIn } from "next-auth/react";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +22,14 @@ export default function RegisterPage() {
       console.error("Error signing in with Google:", error);
     }
   };
+
+  const handleCrediantialSignIn = async () => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <div className="max-w-md mx-auto mt-10 space-y-6 p-8">
@@ -50,16 +58,15 @@ export default function RegisterPage() {
           />
         </div>
 
-        <Button className="w-full">Login</Button>
+        <Button className="w-full"
+        onClick={handleCrediantialSignIn}>Login</Button>
+
         <div>
           <Button onClick={handleGoogleSignIn } className="w-full">
             <div className="flex items-center justify-center space-x-4">
               <img src="./google.png" alt="Image incorrect"  className=" w-4 "/>
               <p>Continue with Google</p>
             </div></Button>
-           <div className="flex items-center justify-center space-x-4 mt-4">
-           <p>Already have an account?</p><Button><Link href="api/login">Login</Link></Button>
-           </div>
         </div>
       </div>
     </div>

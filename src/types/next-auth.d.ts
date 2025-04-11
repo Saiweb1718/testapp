@@ -5,6 +5,8 @@ declare module 'next-auth' {
         _id:string;
         username:string;
         isVerified:boolean;
+        provider:string;
+        email:string;
     }
     interface Session {
       user : {

@@ -22,7 +22,7 @@ export default function Navbar() {
     return null; // Prevents hydration error
   }
   const Handleclick =  () =>{
-   router.push("/registration")
+   router.push("/signup")
   }
 
   return (

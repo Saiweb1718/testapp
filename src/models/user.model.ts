@@ -1,13 +1,15 @@
 import mongoose ,{ Schema,Document } from "mongoose";
 
 export interface User extends Document{
-    username: string;
+    _id:string;
+    username?: string;
     email: string;
-    password: string;
-    verifycode:string;
-    codeExpiry:Date;
+    password?: string;
+    verifycode?:string;
+    codeExpiry?:Date;
     isVerified:boolean;
     groups?:mongoose.Schema.Types.ObjectId[];
+    provider:"google" |"credentials";
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -24,7 +26,6 @@ const UserSchema: Schema<User> = new Schema({
     },
     password:{
         type:String,
-        required:true,
         validate:{
             validator: strongPassword,
             message: 'Password is not strong enough'
@@ -45,7 +46,13 @@ const UserSchema: Schema<User> = new Schema({
     groups:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Group",
-    }]   
+    }],
+    provider:{
+        type:String,
+        enum:["google","credentials"],
+        default:"credentials"
+    }
+
 },{timestamps:true}); 
 
 export const User =  (mongoose.models.User as mongoose.Model<User>)||mongoose.model<User>("User",UserSchema);

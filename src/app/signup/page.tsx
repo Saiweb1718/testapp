@@ -80,7 +80,7 @@ export default function RegisterPage() {
               <p>Continue with Google</p>
             </div></Button>
            <div className="flex items-center justify-center space-x-4 mt-4">
-           <p>Already have an account?</p><Button><Link href="api/login">Login</Link></Button>
+           <p>Already have an account?</p><Button><Link href="/signin">Login</Link></Button>
            </div>
         </div>
       </div>

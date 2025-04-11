@@ -1,6 +1,6 @@
 // import Image from "next/image";
 "use client";
-import Registration from "@/components/Registration";
+import Registration from "@/app/signup/page";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
 import { useEffect,useState } from "react";
@@ -17,7 +17,6 @@ export default function Home() {
   return (
    <>
    <Navbar/>
-   <Registration/>
    </>
   );
 }
