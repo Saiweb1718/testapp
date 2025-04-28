@@ -12,7 +12,6 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const handleGoogleSignIn  = async () => {
@@ -25,9 +24,15 @@ export default function LoginPage() {
 
   const handleCrediantialSignIn = async () => {
     try {
-      
+     await signIn("credentials", {
+        identifier: username,
+        password: password,
+        redirect: false,
+        callbackUrl: "/",
+      });
     } catch (error) {
-      
+      console.error("Error signing in with credentials:", error);
+      setError("Invalid credentials. Please try again.");
     }
   }
 
@@ -69,6 +74,7 @@ export default function LoginPage() {
             </div></Button>
         </div>
       </div>
+      <p>{error}</p>
     </div>
   );
 }

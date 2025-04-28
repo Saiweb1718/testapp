@@ -36,18 +36,24 @@ export const authOptions: NextAuthOptions = {
             };
           }
 
+          const code = Math.floor(100000 + Math.random() * 900000).toString();
+          const expiry = new Date(Date.now() + 10 * 60 * 1000);
+
           const newUser = await User.create({
             email: profile.email,
             username: 
               profile.name?.replace(" ", "_") , 
             isVerified: true,
             provider: "google",
+            verifycode: code,
+            codeExpiry: expiry,
           });
-
+          await newUser.save();
+          console.log("New user created:", newUser);
           return {
             id: newUser._id.toString(),
             email: newUser.email,
-            name: newUser.username,
+            username: newUser.username,
           };
         } catch (error) {
           console.error("Google auth error:", error);

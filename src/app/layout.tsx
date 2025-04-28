@@ -1,9 +1,9 @@
-import Navbar from "@/components/Navbar";
+
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SessionProvider } from "next-auth/react";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
+import { Toaster } from "sonner";
 
 export const metadata = {
   title: "My App",
@@ -21,10 +21,13 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SessionProvider session={session}>
+         {children}
+         <Toaster/>
+          {/* <SessionProvider session={session}>
             <Navbar />
             {children}
-          </SessionProvider>
+          </SessionProvider> */}
+
         </ThemeProvider>
       </body>
     </html>
