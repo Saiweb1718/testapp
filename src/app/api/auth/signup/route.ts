@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         }
         console.log("Creating user...");
         const hashedPassword = await bcrypt.hash(password, 10);
-    
+        // generate code
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const expiry = new Date(Date.now() + 10 * 60 * 1000);
     
@@ -33,9 +33,9 @@ export async function POST(req: Request) {
             isVerified: false,
             provider: "credentials",
         });
-        sendVerificationEmail(email,username,code);
+       await sendVerificationEmail(email,username,code);
          await NewUser.save();
-        console.log("User created successfully:", NewUser);
+        // console.log("User created successfully:", NewUser);
         return NextResponse.json({message:"User created successfully"}, {status:201});
     } catch (error) {
         console.error("Error creating user:", error);

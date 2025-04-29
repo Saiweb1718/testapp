@@ -5,7 +5,7 @@ import { User } from "@/models/user.model";
 export async function POST(req: Request) {
     const { code, email } = await req.json();
     if (!code || !email) {
-        return NextResponse.json({ message: "Please fill all fields" }, { status: 400 });
+        return NextResponse.json({ message: "Please fill all fields",}, { status: 400 });
     }
 
     try {
