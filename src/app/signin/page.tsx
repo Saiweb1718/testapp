@@ -13,10 +13,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
 
   const handleGoogleSignIn  = async () => {
     try {
-      await signIn("google", { callbackUrl: "/" });
+      const response =   await signIn("google", { callbackUrl: "/" });
+      console.log("response", response);
+      
     } catch (error) {
       console.error("Error signing in with Google:", error);
     }
@@ -24,12 +28,14 @@ export default function LoginPage() {
 
   const handleCrediantialSignIn = async () => {
     try {
-     await signIn("credentials", {
+     const response = await signIn("credentials", {
         identifier: username,
         password: password,
         redirect: false,
         callbackUrl: "/",
       });
+      console.log("response", response);
+      setError(response?.error || null);
     } catch (error) {
       console.error("Error signing in with credentials:", error);
       setError("Invalid credentials. Please try again.");
@@ -72,6 +78,19 @@ export default function LoginPage() {
               <img src="./google.png" alt="Image incorrect"  className=" w-4 "/>
               <p>Continue with Google</p>
             </div></Button>
+        </div>
+        <div className="flex items-center justify-between"> 
+        <p className="text-sm ">
+          Don't have an account?{" "}
+          <Link href="/signup" className=" text-blue-700 hover:underline">
+            Sign up
+          </Link>
+        </p>
+        <p>
+          <Link href="/forgot-password" className=" hover:underline">
+            Forgot Password?
+          </Link>
+        </p>
         </div>
       </div>
       <p>{error}</p>

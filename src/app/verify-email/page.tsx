@@ -1,71 +1,69 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
 
-const VerifyEmailPage = () => {
+export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const token = searchParams.get("token");
 
-  const [isVerified, setIsVerified] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const email = searchParams.get('email');
-
-    if (!token || !email) {
-      setErrorMessage('Invalid verification link.');
-      setLoading(false);
+    if (!token) {
+      setStatus("error");
       return;
     }
 
-    const verifyEmail = async () => {
+    const verifyToken = async () => {
       try {
-        const response = await fetch('/api/auth/verify-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token, email }),
+        const res = await axios.post("/api/auth/verify-email", { token});
+        console.log("Verification response:", res);
+        setStatus("success");
+
+        toast("Email verified", {
+          description: "Your email has been verified successfully.",
         });
 
-        const data = await response.json(); // Only call once
-
-        if (!response.ok) {
-          setErrorMessage(data.message || 'Verification failed. Please try again.');
-          return;
-        }
-
-        if (data.success) {
-          setIsVerified(true);
-        } else {
-          setErrorMessage(data.message || 'Verification failed.');
-        }
-      } catch (error) {
-        console.error('Error verifying email:', error);
-        setErrorMessage('Something went wrong. Please try again later.');
-      } finally {
-        setLoading(false);
+        setTimeout(() => {
+          router.push("/signin");
+        }, 3000);
+      } catch (err: any) {
+        setStatus("error");
+        toast("Verification failed", {
+          description: err.response?.data?.message || "Invalid or expired token.",
+        });
       }
     };
 
-    verifyEmail();
-  }, [searchParams]); // No need to depend on token, email separately
+    verifyToken();
+  }, [token, router]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  return (
+    <div className="max-w-md mx-auto mt-32 text-center space-y-6 p-6 shadow-md rounded-lg border">
+      {status === "verifying" && (
+        <>
+          <h1 className="text-xl font-semibold">Verifying your email...</h1>
+          <p className="text-gray-500">Please wait a moment.</p>
+        </>
+      )}
 
-  if (errorMessage) {
-    return <div>Error: {errorMessage}</div>;
-  }
+      {status === "success" && (
+        <>
+          <h1 className="text-xl font-bold text-green-600">Email Verified ✅</h1>
+          <p className="text-gray-500">Redirecting to login page...</p>
+        </>
+      )}
 
-  if (isVerified) {
-    return <div>Email verified successfully!</div>;
-  }
-
-  return <div>Verification failed. Please check the link and try again.</div>;
-};
-
-export default VerifyEmailPage;
+      {status === "error" && (
+        <>
+          <h1 className="text-xl font-bold text-red-600">Verification Failed ❌</h1>
+          <p className="text-gray-500">Your verification link may have expired or is invalid.</p>
+        </>
+      )}
+    </div>
+  );
+}

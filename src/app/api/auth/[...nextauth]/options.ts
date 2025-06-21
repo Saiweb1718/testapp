@@ -21,10 +21,10 @@ export const authOptions: NextAuthOptions = {
           const existingUser = await User.findOne({
             $or: [
               { email: profile.email },
-              { username: profile.name?.replace(" ", "_")},
+              { username: profile.name?.replace(" ", "_") },
             ],
           });
-          
+
           if (existingUser) {
             if (existingUser.provider !== "google") {
               throw new Error("Email already registered with password");
@@ -36,19 +36,15 @@ export const authOptions: NextAuthOptions = {
             };
           }
 
-          const code = Math.floor(100000 + Math.random() * 900000).toString();
-          const expiry = new Date(Date.now() + 10 * 60 * 1000);
-
           const newUser = await User.create({
             email: profile.email,
-            username: 
-              profile.name?.replace(" ", "_") , 
+            username: profile.name?.replace(" ", "_"),
             isVerified: true,
             provider: "google",
-            verifycode: code,
-            codeExpiry: expiry,
+            verifycode: undefined,
+            codeExpiry: undefined,
           });
-          await newUser.save();
+          
           console.log("New user created:", newUser);
           return {
             id: newUser._id.toString(),
@@ -70,7 +66,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials): Promise<any> {
         await dbConnect();
-
+        console.log("connected");
         try {
           const { identifier, password } = credentials as {
             identifier: string;
@@ -82,7 +78,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
-            throw new Error("Invalid credentials");
+            throw new Error("Invalid email or username")
           }
 
           if (user.provider === "google") {
@@ -90,16 +86,16 @@ export const authOptions: NextAuthOptions = {
           }
 
           if (!user.password) {
-            throw new Error("Password not set for this account");
+            throw new Error("password is required")
           }
 
           const isPasswordCorrect = await bcrypt.compare(
             password,
             user.password
           );
-          
+
           if (!isPasswordCorrect) {
-            throw new Error("Incorrect password");
+            throw new Error("Invalid Password")
           }
 
           if (!user.isVerified) {
@@ -114,8 +110,7 @@ export const authOptions: NextAuthOptions = {
             provider: user.provider,
           };
         } catch (error) {
-          console.error("Authorization error:", error);
-          throw error;
+          throw new Error("Auth error in options");
         }
       },
     }),

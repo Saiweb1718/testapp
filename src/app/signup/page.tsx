@@ -11,11 +11,13 @@ import { toast } from "sonner";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import {useRouter} from "next/navigation";
 
 type SignupData = z.infer<typeof signUpSchema>;
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -57,6 +59,7 @@ export default function RegisterPage() {
       const result = await res.json();
 
       if (!res.ok) {
+        console.log("errors", result);
         throw new Error(result.message || "Something went wrong");
       }
 
@@ -64,9 +67,6 @@ export default function RegisterPage() {
         description: "Registration successful. Check your email to verify.",
       });
 
-      setTimeout(() => {
-        // window.location.href = "/verify";
-      }, 1500);
     } catch (err: any) {
       toast("Registration failed", {
         description: err.message,

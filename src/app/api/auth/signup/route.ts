@@ -3,6 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import { User } from "@/models/user.model";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/lib/email";
+import crypto from "crypto";
 
 export async function POST(req: Request) {
     const { username,email,password} = await req.json();
@@ -21,10 +22,11 @@ export async function POST(req: Request) {
         console.log("Creating user...");
         const hashedPassword = await bcrypt.hash(password, 10);
         // generate code
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiry = new Date(Date.now() + 10 * 60 * 1000);
+        const rawtoken =  crypto.randomBytes(32).toString("hex");
+        const code = crypto.createHash("sha256").update(rawtoken).digest("hex")
+        const expiry = new Date(Date.now() +  60 * 60 * 1000);
     
-        const NewUser = await User.create({
+        const NewUser =  ({
             username,
             email,
             password: hashedPassword,
@@ -33,9 +35,8 @@ export async function POST(req: Request) {
             isVerified: false,
             provider: "credentials",
         });
-       await sendVerificationEmail(email,username,code);
-         await NewUser.save();
-        // console.log("User created successfully:", NewUser);
+       await sendVerificationEmail(email,username,rawtoken);
+       await User.create(NewUser);
         return NextResponse.json({message:"User created successfully"}, {status:201});
     } catch (error) {
         console.error("Error creating user:", error);

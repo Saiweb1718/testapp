@@ -1,31 +1,31 @@
+
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "@/models/user.model";
+import crypto from "crypto"
+
 
 export async function POST(req: Request) {
-    const { code, email } = await req.json();
-    if (!code || !email) {
-        return NextResponse.json({ message: "Please fill all fields",}, { status: 400 });
+    const { token } = await req.json();
+    if(!token){
+        return NextResponse.json(
+            {message:"code is undefined"},{status:400}
+        );
     }
+    const hashed_token = crypto.createHash('sha256').update(token).digest("hex")
+    
 
     try {
         await dbConnect();
-        const user = await User.findOne({ email });
-        if (!user) {
-            return NextResponse.json({ message: "User not found" }, { status: 404 });
+        console.log("hashed token",hashed_token);
+        
+        const user = await User.findOne({ verifycode:hashed_token });
+        console.log("user Object1",user);
+        if (!user ||(user && (!user.codeExpiry || user.codeExpiry < new Date()))) {
+            return NextResponse.json({ message: "Invalid or expired the verification link" }, { status: 404 });
         }
 
-        if (user.isVerified) {
-            return NextResponse.json({ message: "User already verified" }, { status: 409 });
-        }
-
-        if (user.verifycode !== code) {
-            return NextResponse.json({ message: "Invalid verification code" }, { status: 401 });
-        }
-
-        if ( user.codeExpiry && user.codeExpiry < new Date()) {
-            return NextResponse.json({ message: "Verification code expired" }, { status: 410 });
-        }
+      
 
         user.isVerified = true;
         user.verifycode = undefined;
